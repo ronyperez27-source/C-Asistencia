@@ -1,8 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.core.database import engine, Base
+from app.models.empleado import EmpleadoModel
+from app.api.empleados import router as empleados_router
 from app.api import auth_router
 
-app = FastAPI(title="Sistema de Asistencia - Grifo")
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="Sistema de Asistencia - El Huamanguino")
 
 app.add_middleware(
     CORSMiddleware,
@@ -13,7 +19,9 @@ app.add_middleware(
 )
 
 app.include_router(auth_router.router, prefix="/api/v1")
+app.include_router(empleados_router)
+
 
 @app.get("/")
-def read_root():
-    return {"message": "API de Control de Asistencia activa"}
+def inicio():
+    return {"mensaje": "API conectada a SQL Server correctamente"}
