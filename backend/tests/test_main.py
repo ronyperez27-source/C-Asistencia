@@ -3,7 +3,8 @@ from app.main import app
 
 client = TestClient(app)
 
+
 def test_read_root():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"message": "API de Control de Asistencia activa"}
+    assert response.json() == {"mensaje": "API conectada a SQL Server correctamente"}

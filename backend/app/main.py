@@ -1,7 +1,15 @@
 from fastapi import FastAPI
+from app.core.database import engine, Base
+from app.models.empleado import EmpleadoModel
+from app.api.empleados import router as empleados_router
 
-app = FastAPI(title="Sistema de Asistencia - Grifo")
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="Sistema de Asistencia - El Huamanguino")
+
+app.include_router(empleados_router)
+
 
 @app.get("/")
-def read_root():
-    return {"message": "API de Control de Asistencia activa"}
+def inicio():
+    return {"mensaje": "API conectada a SQL Server correctamente"}
