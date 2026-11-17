@@ -3,10 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.database import engine, Base
 from app.models.empleado import EmpleadoModel
-from app.models.asistencia import AsistenciaModel  # <-- Importar antes de create_all
+from app.models.asistencia import AsistenciaModel  
 from app.api.empleados import router as empleados_router
 from app.api.asistencia import router as asistencia_router  # <-- Nuevo router
 from app.api import auth_router
+from app.api.planilla import router as planilla_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -23,6 +24,7 @@ app.add_middleware(
 app.include_router(auth_router.router, prefix="/api/v1")
 app.include_router(empleados_router)
 app.include_router(asistencia_router)  # <-- Registrar router
+app.include_router(planilla_router)
 
 @app.get("/")
 def inicio():
