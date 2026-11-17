@@ -1,7 +1,14 @@
-from datetime import datetime
-from zoneinfo import ZoneInfo
+from datetime import datetime, timedelta, timezone
 
-PERU_TZ = ZoneInfo("America/Lima")
+try:
+    from zoneinfo import ZoneInfo
+    PERU_TZ = ZoneInfo("America/Lima")
+except Exception:
+    PERU_TZ = timezone(timedelta(hours=-5))
+
 
 def obtener_timestamp_servidor() -> datetime:
-    return datetime.now(PERU_TZ).replace(tzinfo=None)
+    try:
+        return datetime.now(PERU_TZ).replace(tzinfo=None)
+    except Exception:
+        return datetime.now(timezone(timedelta(hours=-5))).replace(tzinfo=None)

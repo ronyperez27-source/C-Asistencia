@@ -42,7 +42,7 @@ def test_registrar_empleado_valido():
         "cargo": "Grifero",
         "tarifa_hora": 12.5,
     }
-    res = client.post("/api/empleados/", json=payload)
+    res = client.post("/api/v1/empleados/", json=payload)
     assert res.status_code == 201
     data = res.json()
     assert data["dni"] == "71234567"
@@ -57,21 +57,21 @@ def test_registrar_dni_duplicado():
         "cargo": "Grifero",
         "tarifa_hora": 12.5,
     }
-    client.post("/api/empleados/", json=payload)
-    res_dup = client.post("/api/empleados/", json=payload)
+    client.post("/api/v1/empleados/", json=payload)
+    res_dup = client.post("/api/v1/empleados/", json=payload)
     assert res_dup.status_code == 400
     assert res_dup.json()["detail"] == "El DNI ya se encuentra registrado"
 
 
 def test_registrar_dni_invalido_y_tarifa_negativa():
     res_dni = client.post(
-        "/api/empleados/",
+        "/api/v1/empleados/",
         json={"dni": "123", "nombres": "Ana", "cargo": "Cajera", "tarifa_hora": 10},
     )
     assert res_dni.status_code == 422
 
     res_tarifa = client.post(
-        "/api/empleados/",
+        "/api/v1/empleados/",
         json={"dni": "87654321", "nombres": "Ana", "cargo": "Cajera", "tarifa_hora": -5},
     )
     assert res_tarifa.status_code == 422
@@ -79,7 +79,7 @@ def test_registrar_dni_invalido_y_tarifa_negativa():
 
 def test_actualizar_empleado():
     creado = client.post(
-        "/api/empleados/",
+        "/api/v1/empleados/",
         json={
             "dni": "44556677",
             "nombres": "Carlos Ruiz",
@@ -89,10 +89,9 @@ def test_actualizar_empleado():
     ).json()
 
     res = client.put(
-        f"/api/empleados/{creado['id']}",
+        f"/api/v1/empleados/{creado['id']}",
         json={"cargo": "Supervisor", "tarifa_hora": 15.0},
     )
     assert res.status_code == 200
     assert res.json()["cargo"] == "Supervisor"
     assert res.json()["tarifa_hora"] == 15.0
-
