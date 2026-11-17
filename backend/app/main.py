@@ -12,6 +12,7 @@ from app.api.auth_router import router as auth_router
 from app.api.empleados import router as empleados_router
 from app.api.asistencia import router as asistencia_router
 from app.api.turnos import router as turnos_router
+from app.api.planilla import router as planilla_router
 
 
 @asynccontextmanager
@@ -40,6 +41,7 @@ app.include_router(auth_router, prefix="/api/v1")
 app.include_router(empleados_router, prefix="/api/v1")
 app.include_router(asistencia_router, prefix="/api/v1")
 app.include_router(turnos_router, prefix="/api/v1")
+app.include_router(planilla_router, prefix="/api/v1")
 
 
 @app.get("/")
