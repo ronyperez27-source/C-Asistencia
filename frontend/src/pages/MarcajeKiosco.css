@@ -1,0 +1,147 @@
+.kiosco-container {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, sans-serif;
+  user-select: none;
+}
+
+.kiosco-header {
+  text-align: center;
+}
+
+.kiosco-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: 1px;
+  color: #38bdf8;
+}
+
+.kiosco-reloj {
+  font-size: 4.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.kiosco-fecha {
+  font-size: 1.25rem;
+  color: #94a3b8;
+  text-transform: capitalize;
+}
+
+.kiosco-centro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 650px;
+  min-height: 280px;
+}
+
+.escaner-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px dashed #38bdf8;
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-align: center;
+  width: 100%;
+}
+
+.escaner-icono {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.escaner-box h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+}
+
+.escaner-box p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 1.1rem;
+}
+
+/* Alertas emergentes (CAH-33) */
+.alerta-card {
+  width: 100%;
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+  animation: aparecer 0.2s ease-out;
+}
+
+.alerta-verde {
+  background-color: #16a34a;
+  border: 3px solid #4ade80;
+  color: #ffffff;
+}
+
+.alerta-roja {
+  background-color: #dc2626;
+  border: 3px solid #f87171;
+  color: #ffffff;
+}
+
+.alerta-titulo {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 0.75rem 0;
+}
+
+.alerta-empleado {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0.5rem 0;
+}
+
+.alerta-detalle {
+  font-size: 1.35rem;
+  margin: 0.25rem 0;
+  opacity: 0.95;
+}
+
+/* Input oculto pero activo para capturar escáner USB o pruebas manuales */
+.input-escaner-oculto {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.kiosco-footer {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.btn-fullscreen {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border: 1px solid #475569;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-fullscreen:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes aparecer {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
