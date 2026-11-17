@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth_router
+from app.api import auth_router, turnos
+from app.core.database import Base, engine
+from app.models import turno  # Registra el modelo TurnoDB en SQLAlchemy
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Sistema de Asistencia - Grifo")
 
@@ -13,6 +17,8 @@ app.add_middleware(
 )
 
 app.include_router(auth_router.router, prefix="/api/v1")
+app.include_router(turnos.router, prefix="/api/v1")
+
 
 @app.get("/")
 def read_root():

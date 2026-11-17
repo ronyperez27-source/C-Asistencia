@@ -2,7 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './LoginPage.css';
 
-export const LoginPage: React.FC = () => {
+interface LoginPageProps {
+  onLoginSuccess?: () => void;
+}
+
+export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [mostrarPassword, setMostrarPassword] = useState(false);
@@ -22,12 +26,10 @@ export const LoginPage: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Fondo base
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#e2e8f0';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Líneas de ruido
     for (let i = 0; i < 6; i++) {
       ctx.strokeStyle = `rgba(30, 58, 138, ${Math.random() * 0.4 + 0.2})`;
       ctx.lineWidth = 1.5;
@@ -37,7 +39,6 @@ export const LoginPage: React.FC = () => {
       ctx.stroke();
     }
 
-    // Puntos de ruido
     for (let i = 0; i < 35; i++) {
       ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
       ctx.beginPath();
@@ -45,7 +46,6 @@ export const LoginPage: React.FC = () => {
       ctx.fill();
     }
 
-    // Dibujar cada carácter con ligera rotación
     ctx.font = 'bold 22px "Courier New", monospace';
     ctx.textBaseline = 'middle';
 
@@ -99,7 +99,9 @@ export const LoginPage: React.FC = () => {
       });
 
       localStorage.setItem('token_admin', data.access_token);
-      alert('¡Bienvenida Administradora! Acceso concedido al sistema.');
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.detail || 'Error al iniciar sesión');
@@ -115,7 +117,7 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="login-wrapper">
       <div className="login-left">
-        <div className="brand-badge">EESS • CONTROL OPERATIVO</div>
+        <div className="brand-badge">EESS • GRIFO HUAMANGUINO</div>
         <h1 className="hero-title">Sistema de Gestión de Asistencia y Planillas</h1>
         <p className="hero-text">
           Plataforma administrativa para el control de turnos, validación de puntualidad,
