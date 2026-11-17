@@ -6,9 +6,12 @@ from app.core.database import engine, Base
 from app.models.empleado import EmpleadoModel
 from app.models.usuario import Usuario
 from app.models.asistencia import AsistenciaModel
+from app.models.turno import Turno
+
 from app.api.auth_router import router as auth_router
 from app.api.empleados import router as empleados_router
 from app.api.asistencia import router as asistencia_router
+from app.api.turnos import router as turnos_router
 
 
 @asynccontextmanager
@@ -36,6 +39,7 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(empleados_router, prefix="/api/v1")
 app.include_router(asistencia_router, prefix="/api/v1")
+app.include_router(turnos_router, prefix="/api/v1")
 
 
 @app.get("/")

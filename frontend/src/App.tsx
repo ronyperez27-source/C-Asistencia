@@ -1,11 +1,16 @@
 import { LoginPage } from './pages/LoginPage';
 import MarcajeKiosco from './pages/MarcajeKiosco';
+import AdminTurnosPage from './pages/AdminTurnosPage';
 
 function App() {
   const rutaActual = window.location.pathname;
 
   if (rutaActual === '/marcaje') {
     return <MarcajeKiosco />;
+  }
+
+  if (rutaActual === '/admin/turnos') {
+    return <AdminTurnosPage />;
   }
 
   return (
