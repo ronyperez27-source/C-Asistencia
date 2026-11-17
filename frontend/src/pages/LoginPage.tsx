@@ -99,7 +99,7 @@ export const LoginPage: React.FC = () => {
       });
 
       localStorage.setItem('token_admin', data.access_token);
-      alert('¡Bienvenida Administradora! Acceso concedido al sistema.');
+      window.location.href = '/admin/turnos';
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.detail || 'Error al iniciar sesión');

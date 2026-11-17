@@ -22,5 +22,6 @@ class Turno(Base):
     def evaluar_puntualidad(self, hora_marcaje: time) -> str:
         """Retorna 'A tiempo' si marca hasta la hora límite exacta, o 'Tardanza' si la supera."""
         limite = self.obtener_hora_limite()
+        # Normalizamos segundos a 0 para respetar el minuto exacto (ej. 06:05)
         marcaje_sin_seg = hora_marcaje.replace(second=0, microsecond=0)
         return "A tiempo" if marcaje_sin_seg <= limite else "Tardanza"
