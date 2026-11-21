@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import AdminHeader from '../components/AdminHeader';
+import { CheckCircle2, AlertTriangle, AlertCircle, QrCode } from 'lucide-react';
+import AdminLayout from '../components/AdminLayout';
 import EmpleadoForm from '../components/empleados/EmpleadoForm';
 import FotocheckCard from '../components/empleados/FotocheckCard';
 import EmpleadosTable from '../components/empleados/EmpleadosTable';
@@ -146,55 +147,64 @@ export default function AdminEmpleadosPage() {
     }
   };
 
-  // ── Render ────────────────────────────────────────────────────────────────
-
   return (
-    <div className="emp-page">
-      <div className="emp-page__inner">
-        <AdminHeader paginaActiva="empleados" />
-
-        {/* ── Alertas ── */}
-        {alerta.kind === 'exito' && (
-          <div className="emp-alerta emp-alerta--exito">✅ {alerta.mensaje}</div>
-        )}
-        {alerta.kind === 'dni_dup' && (
-          <div className="emp-alerta emp-alerta--dni-dup">⚠️ {alerta.mensaje}</div>
-        )}
-        {alerta.kind === 'error' && (
-          <div className="emp-alerta emp-alerta--error">❌ {alerta.mensaje}</div>
-        )}
-
-        {/* ── Grid: Formulario + Fotocheck ── */}
-        <div className="emp-page__grid">
-          <EmpleadoForm
-            form={form}
-            errors={errors}
-            enviando={enviando}
-            onChange={handleChange}
-            onDniKeyDown={handleDniKeyDown}
-            onSubmit={handleSubmit}
-          />
-
-          <div>
-            {fotocheckEmpleado ? (
-              <FotocheckCard
-                empleado={fotocheckEmpleado}
-                onCerrar={() => setFotocheckEmpleado(null)}
-              />
-            ) : (
-              <div className="emp-fotocheck-placeholder">
-                <div className="emp-fotocheck-placeholder__icon">🪪</div>
-                <p className="emp-fotocheck-placeholder__text">
-                  El código de marcaje del empleado aparecerá aquí tras el registro.
-                </p>
-              </div>
-            )}
-          </div>
+    <AdminLayout
+      paginaActiva="empleados"
+      titulo="Gestión de Personal Operativo"
+      subtitulo="Registro de trabajadores, asignación de código QR y emisión oficial de fotochecks"
+    >
+      {/* ── Alertas visuales con iconografía fina ── */}
+      {alerta.kind === 'exito' && (
+        <div className="emp-alerta emp-alerta--exito">
+          <CheckCircle2 size={18} style={{ color: '#059669', flexShrink: 0 }} />
+          <span>{alerta.mensaje}</span>
         </div>
+      )}
+      {alerta.kind === 'dni_dup' && (
+        <div className="emp-alerta emp-alerta--dni-dup">
+          <AlertTriangle size={18} style={{ color: '#dc2626', flexShrink: 0 }} />
+          <span>{alerta.mensaje}</span>
+        </div>
+      )}
+      {alerta.kind === 'error' && (
+        <div className="emp-alerta emp-alerta--error">
+          <AlertCircle size={18} style={{ color: '#ea580c', flexShrink: 0 }} />
+          <span>{alerta.mensaje}</span>
+        </div>
+      )}
 
-        {/* ── Tabla ── */}
-        <EmpleadosTable empleados={empleados} cargando={cargando} />
+      {/* ── Grid Principal: Formulario + Tarjeta Fotocheck ── */}
+      <div className="emp-page__grid">
+        <EmpleadoForm
+          form={form}
+          errors={errors}
+          enviando={enviando}
+          onChange={handleChange}
+          onDniKeyDown={handleDniKeyDown}
+          onSubmit={handleSubmit}
+        />
+
+        <div>
+          {fotocheckEmpleado ? (
+            <FotocheckCard
+              empleado={fotocheckEmpleado}
+              onCerrar={() => setFotocheckEmpleado(null)}
+            />
+          ) : (
+            <div className="emp-fotocheck-placeholder">
+              <div className="emp-fotocheck-placeholder__icon">
+                <QrCode size={48} strokeWidth={1.5} />
+              </div>
+              <p className="emp-fotocheck-placeholder__text">
+                El fotocheck oficial con código QR se generará aquí tras el registro del trabajador.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* ── Tabla de Personal ── */}
+      <EmpleadosTable empleados={empleados} cargando={cargando} />
+    </AdminLayout>
   );
 }

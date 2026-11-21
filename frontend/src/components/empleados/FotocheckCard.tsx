@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { Printer, Download, X } from 'lucide-react';
 import type { EmpleadoResponse } from './empleado.types';
 import './empleados.css';
 
@@ -14,11 +15,11 @@ export default function FotocheckCard({
   empleado,
   onCerrar,
   titulo = 'Fotocheck Generado',
-  badgeTexto = '✅ Registro Exitoso',
+  badgeTexto = 'CREDENCIAL OFICIAL',
 }: Props) {
   const credencialRef = useRef<HTMLDivElement>(null);
 
-  // ── Impresión directa ───────────────────────────────────────────────────────
+  // ── Impresión directa (1/1 página oficial) ────────────────────────────────
   const manejarImprimir = () => {
     window.print();
   };
@@ -135,7 +136,7 @@ export default function FotocheckCard({
 
   return (
     <div className="emp-fotocheck-container">
-      {/* ── Encabezado de la ventana modal (solo pantalla) ── */}
+      {/* ── Encabezado modal (solo pantalla / no-print) ── */}
       <div className="emp-fotocheck-ui-header no-print">
         <div>
           <div className="emp-fotocheck-ui-badge">{badgeTexto}</div>
@@ -144,9 +145,10 @@ export default function FotocheckCard({
         <button
           className="emp-fotocheck-ui-close"
           onClick={onCerrar}
-          title="Cerrar"
+          title="Cerrar ventana"
+          aria-label="Cerrar ventana"
         >
-          ✕
+          <X size={18} />
         </button>
       </div>
 
@@ -200,23 +202,25 @@ export default function FotocheckCard({
           <strong className="emp-fotocheck-tarifa-monto">S/ {empleado.tarifa_hora.toFixed(2)}</strong>
         </div>
 
-        {/* Botones de acción */}
+        {/* Botones de acción con iconos vectoriales */}
         <div className="emp-fotocheck-btn-group">
           <button
             type="button"
             className="emp-fotocheck-btn emp-fotocheck-btn--print"
             onClick={manejarImprimir}
-            title="Imprimir Fotocheck en tamaño credencial"
+            title="Imprimir Fotocheck en tamaño carnet"
           >
-            🖨️ Imprimir
+            <Printer size={15} />
+            <span>Imprimir</span>
           </button>
           <button
             type="button"
             className="emp-fotocheck-btn emp-fotocheck-btn--download"
             onClick={manejarDescargarPNG}
-            title="Descargar Fotocheck en alta resolución (PNG)"
+            title="Descargar Fotocheck en PNG de alta resolución"
           >
-            ⬇️ Descargar PNG
+            <Download size={15} />
+            <span>Descargar PNG</span>
           </button>
         </div>
 

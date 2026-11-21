@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Users, QrCode } from 'lucide-react';
 import type { EmpleadoResponse } from './empleado.types';
 import FotocheckCard from './FotocheckCard';
 import './empleados.css';
@@ -14,28 +15,37 @@ export default function EmpleadosTable({ empleados, cargando }: Props) {
 
   return (
     <div className="emp-tabla">
-      {/* ── Encabezado ── */}
+      {/* ── Encabezado de Tabla ── */}
       <div className="emp-tabla__header">
-        <h2 className="emp-tabla__title">📋 Personal Registrado</h2>
-        <span className="emp-tabla__badge">{activos} activos</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="emp-tabla__header-icon">
+            <Users size={18} />
+          </div>
+          <h2 className="emp-tabla__title">Personal Operativo Registrado</h2>
+        </div>
+        <span className="emp-tabla__badge">
+          {activos} {activos === 1 ? 'activo' : 'activos'} de {empleados.length}
+        </span>
       </div>
 
       {/* ── Contenido ── */}
       {cargando ? (
         <div className="emp-tabla__loading">
-          <p>Cargando empleados…</p>
+          <p>Cargando personal…</p>
         </div>
       ) : empleados.length === 0 ? (
         <div className="emp-tabla__empty">
-          <div className="emp-tabla__empty-icon">👥</div>
-          <p>Aún no hay empleados registrados.</p>
+          <div className="emp-tabla__empty-icon">
+            <Users size={36} strokeWidth={1.5} />
+          </div>
+          <p>Aún no hay empleados registrados en el sistema.</p>
         </div>
       ) : (
         <div className="emp-tabla__scroll">
           <table>
             <thead>
               <tr>
-                {['#', 'DNI', 'Nombres', 'Cargo', 'Tarifa/h', 'Código Marcaje', 'Estado', 'Acción'].map(
+                {['#', 'DNI', 'Nombres', 'Cargo', 'Tarifa/h', 'Código Marcaje', 'Estado', 'Fotocheck'].map(
                   (col) => (
                     <th key={col}>{col}</th>
                   )
@@ -48,9 +58,9 @@ export default function EmpleadosTable({ empleados, cargando }: Props) {
                   key={emp.id}
                   className={idx % 2 === 0 ? 'emp-tabla__row--even' : 'emp-tabla__row--odd'}
                 >
-                  <td style={{ color: '#94a3b8', fontWeight: 600 }}>{idx + 1}</td>
-                  <td style={{ fontWeight: 600, letterSpacing: '0.05em' }}>{emp.dni}</td>
-                  <td style={{ fontWeight: 500 }}>{emp.nombres}</td>
+                  <td className="emp-tabla__td-num">{idx + 1}</td>
+                  <td className="emp-tabla__td-dni">{emp.dni}</td>
+                  <td className="emp-tabla__td-nombre">{emp.nombres}</td>
                   <td>
                     <span
                       className={
@@ -62,7 +72,9 @@ export default function EmpleadosTable({ empleados, cargando }: Props) {
                       {emp.cargo}
                     </span>
                   </td>
-                  <td style={{ fontWeight: 600 }}>S/ {emp.tarifa_hora.toFixed(2)}</td>
+                  <td className="emp-tabla__td-tarifa">
+                    S/ {emp.tarifa_hora.toFixed(2)}
+                  </td>
                   <td>
                     <code className="emp-tabla__codigo">{emp.codigo_qr}</code>
                   </td>
@@ -82,7 +94,8 @@ export default function EmpleadosTable({ empleados, cargando }: Props) {
                       title="Ver Fotocheck y Código QR"
                       onClick={() => setEmpleadoSeleccionado(emp)}
                     >
-                      📷 QR
+                      <QrCode size={13} />
+                      <span>Ver QR</span>
                     </button>
                   </td>
                 </tr>
@@ -107,8 +120,8 @@ export default function EmpleadosTable({ empleados, cargando }: Props) {
             <FotocheckCard
               empleado={empleadoSeleccionado}
               onCerrar={() => setEmpleadoSeleccionado(null)}
-              titulo="Fotocheck y Código QR"
-              badgeTexto="🪪 Fotocheck Oficial"
+              titulo="Fotocheck Oficial"
+              badgeTexto="EESS HUAMANGUINO"
             />
           </div>
         </div>

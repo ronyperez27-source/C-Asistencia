@@ -1,0 +1,219 @@
+/* ============================================================
+   AdminLayout.css — Grifo El Huamanguino (Estación de Servicio)
+   Estética Industrial / Energía: Azul Petróleo & Naranja Combustible
+   ============================================================ */
+
+.admin-layout {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Navbar Superior ────────────────────────────────────────── */
+.admin-navbar {
+  background-color: #071426;
+  border-bottom: 1px solid #1e293b;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(7, 20, 38, 0.25);
+}
+
+.admin-navbar__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── Marca y Logotipo Oficial ───────────────────────────────── */
+.admin-navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  text-decoration: none;
+}
+
+/* Cápsula blanca limpia para el logo sobre fondo oscuro */
+.admin-navbar__logo-badge {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 5px 12px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.admin-navbar__logo-img {
+  height: 30px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.admin-navbar__brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-navbar__title {
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.admin-navbar__subtitle {
+  color: #94a3b8;
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  margin-top: 0.1rem;
+}
+
+/* ── Navegación de Pestañas (Tabs) ──────────────────────────── */
+.admin-navbar__nav {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.admin-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.admin-tab--active {
+  background-color: #ea580c;
+  color: #ffffff;
+  border-color: #f97316;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35);
+}
+
+.admin-tab--inactive {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  border-color: #1e293b;
+}
+
+.admin-tab--inactive:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: #334155;
+}
+
+/* ── Acciones de Encabezado ─────────────────────────────────── */
+.admin-navbar__actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.admin-btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.admin-btn-kiosco {
+  background-color: #0f2744;
+  color: #38bdf8;
+  border: 1px solid #1e3a8a;
+}
+
+.admin-btn-kiosco:hover {
+  background-color: #1e3a8a;
+  color: #ffffff;
+  border-color: #38bdf8;
+}
+
+.admin-btn-logout {
+  background-color: rgba(220, 38, 38, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.admin-btn-logout:hover {
+  background-color: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+/* ── Área de Contenido Principal ───────────────────────────── */
+.admin-content {
+  flex: 1;
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Cabecera de Página */
+.admin-page-header {
+  margin-bottom: 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-page-header__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.admin-page-header__subtitle {
+  margin: 0.25rem 0 0;
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+@media (max-width: 768px) {
+  .admin-navbar__inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+  
+  .admin-navbar__nav {
+    justify-content: center;
+  }
+  
+  .admin-navbar__actions {
+    justify-content: center;
+  }
+}

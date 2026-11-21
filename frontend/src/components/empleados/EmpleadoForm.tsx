@@ -1,3 +1,4 @@
+import { UserPlus, UserCheck } from 'lucide-react';
 import type { FormData, FormErrors } from './empleado.types';
 import { CARGOS_OPERATIVOS } from './empleado.types';
 import './empleados.css';
@@ -22,7 +23,12 @@ export default function EmpleadoForm({
   return (
     <div className="emp-card">
       <form className="emp-form" onSubmit={onSubmit} noValidate>
-        <h2 className="emp-form__title">👷 Registrar Nuevo Empleado</h2>
+        <div className="emp-form__header-row">
+          <div className="emp-form__icon-badge">
+            <UserPlus size={18} />
+          </div>
+          <h2 className="emp-form__title">Registrar Nuevo Empleado</h2>
+        </div>
 
         {/* ── Nombres ── */}
         <div className="emp-form__field">
@@ -45,7 +51,7 @@ export default function EmpleadoForm({
         {/* ── DNI ── */}
         <div className="emp-form__field">
           <label htmlFor="dni" className="emp-form__label">
-            DNI <span className="emp-form__required">*</span>
+            DNI (8 dígitos) <span className="emp-form__required">*</span>
           </label>
           <input
             id="dni"
@@ -57,17 +63,17 @@ export default function EmpleadoForm({
             onChange={onChange}
             onKeyDown={onDniKeyDown}
             placeholder="12345678"
-            className={`emp-form__input${errors.dni ? ' emp-form__input--error' : ''}`}
+            className={`emp-form__input emp-form__input--numeric${errors.dni ? ' emp-form__input--error' : ''}`}
             autoComplete="off"
           />
-          <span className="emp-form__hint">Exactamente 8 dígitos numéricos.</span>
+          <span className="emp-form__hint">Exactamente 8 dígitos numéricos sin letras ni símbolos.</span>
           {errors.dni && <span className="emp-form__error">{errors.dni}</span>}
         </div>
 
         {/* ── Cargo ── */}
         <div className="emp-form__field">
           <label htmlFor="cargo" className="emp-form__label">
-            Cargo <span className="emp-form__required">*</span>
+            Cargo Operativo <span className="emp-form__required">*</span>
           </label>
           <select
             id="cargo"
@@ -76,7 +82,7 @@ export default function EmpleadoForm({
             onChange={onChange}
             className={`emp-form__select${errors.cargo ? ' emp-form__select--error' : ''}`}
           >
-            <option value="">— Selecciona un cargo —</option>
+            <option value="">— Selecciona un cargo sujeto a marcaje —</option>
             {CARGOS_OPERATIVOS.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -100,14 +106,21 @@ export default function EmpleadoForm({
             value={form.tarifa_hora}
             onChange={onChange}
             placeholder="Ej: 5.50"
-            className={`emp-form__input${errors.tarifa_hora ? ' emp-form__input--error' : ''}`}
+            className={`emp-form__input emp-form__input--numeric${errors.tarifa_hora ? ' emp-form__input--error' : ''}`}
           />
           {errors.tarifa_hora && <span className="emp-form__error">{errors.tarifa_hora}</span>}
         </div>
 
         {/* ── Submit ── */}
         <button type="submit" disabled={enviando} className="emp-form__submit">
-          {enviando ? '⏳ Registrando…' : '✚ Registrar Empleado'}
+          {enviando ? (
+            <span>Registrando…</span>
+          ) : (
+            <>
+              <UserCheck size={17} />
+              <span>Registrar y Generar Fotocheck</span>
+            </>
+          )}
         </button>
       </form>
     </div>
