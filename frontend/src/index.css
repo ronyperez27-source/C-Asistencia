@@ -119,3 +119,28 @@ body,
   max-width: none;
   min-height: 100vh;
 }
+
+/* ── Impresión global: eliminar restricciones de layout del SPA ── */
+@media print {
+  /* Anula el color-scheme dark que borra fondos en impresión */
+  :root {
+    color-scheme: light !important;
+  }
+
+  /* El #root no debe ocultar ni cortar la credencial */
+  #root {
+    display: block !important;
+    width: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    border: none !important;
+  }
+
+  /* Suprimir textos globales heredados */
+  h1,
+  h2 {
+    font-size: inherit !important;
+    margin: 0 !important;
+    letter-spacing: normal !important;
+  }
+}

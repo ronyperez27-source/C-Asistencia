@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import {
+  Fuel,
+  Clock,
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  RefreshCw,
+  AlertCircle,
+  ArrowRight,
+} from 'lucide-react';
 import './LoginPage.css';
 
 export const LoginPage: React.FC = () => {
@@ -114,62 +124,106 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="login-wrapper">
+      {/* ── Panel Izquierdo Hero ── */}
       <div className="login-left">
-        <div className="brand-badge">EESS • CONTROL OPERATIVO</div>
-        <h1 className="hero-title">Sistema de Gestión de Asistencia y Planillas</h1>
+        <div className="brand-badge">
+          <Fuel size={14} />
+          <span>EESS • AYACUCHO</span>
+        </div>
+        <h1 className="hero-title">
+          Grifo El Huamanguino <br />
+          <span className="hero-title__highlight">Gestión de Asistencia & Planillas</span>
+        </h1>
         <p className="hero-text">
-          Plataforma administrativa para el control de turnos, validación de puntualidad,
-          gestión de personal y cálculo automatizado de planillas de la estación de servicio.
+          Plataforma administrativa para la configuración de turnos operativos, control de puntualidad
+          en tiempo real y cálculo automatizado de personal para la estación de servicio.
         </p>
+
+        <div className="hero-features">
+          <div className="hero-feature-item">
+            <Clock size={18} className="hero-feature-icon" />
+            <div className="hero-feature-text">
+              <strong>Control de Turnos y Tolerancia</strong>
+              <span>Programación exacta de horarios operativos y límites de puntualidad.</span>
+            </div>
+          </div>
+          <div className="hero-feature-item">
+            <Fuel size={18} className="hero-feature-icon" />
+            <div className="hero-feature-text">
+              <strong>Kiosco de Marcaje Autónomo</strong>
+              <span>Estación rápida de lectura óptica por código QR para despachadores y supervisores.</span>
+            </div>
+          </div>
+        </div>
+
         <div className="security-note">
-          🔒 Acceso restringido exclusivamente a personal administrativo autorizado.
+          <ShieldCheck size={18} style={{ color: '#f59e0b', flexShrink: 0 }} />
+          <span>Acceso restringido exclusivamente a la Administradora y jefatura autorizada.</span>
         </div>
       </div>
 
+      {/* ── Panel Derecho: Formulario de Login ── */}
       <div className="login-right">
         <div className="login-card">
           <div className="login-header">
-            <div className="icon-circle">⛽</div>
+            {/* Logotipo Oficial en reemplazo del surtidor genérico */}
+            <div className="login-logo-container">
+              <img
+                src="/logo-huamanguino.svg"
+                alt="Grifo El Huamanguino"
+                className="login-logo-img"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/logo-huamanguino.jpg';
+                }}
+              />
+            </div>
             <h2 className="login-title">Iniciar Sesión</h2>
             <p className="login-subtitle">Ingresa tus credenciales de Administradora</p>
           </div>
 
           {error && (
-            <div className="error-box">
-              ⚠️ {error}
+            <div className="error-box" role="alert">
+              <AlertCircle size={16} style={{ flexShrink: 0 }} />
+              <span>{error}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
             <div className="input-group">
-              <label className="input-label">Usuario</label>
+              <label className="input-label" htmlFor="login-username">Usuario</label>
               <input
+                id="login-username"
                 type="text"
                 placeholder="Ej. admin"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 className="form-input"
+                autoComplete="username"
               />
             </div>
 
             <div className="input-group">
-              <label className="input-label">Contraseña</label>
+              <label className="input-label" htmlFor="login-password">Contraseña</label>
               <div className="password-wrapper">
                 <input
+                  id="login-password"
                   type={mostrarPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="form-input password-input"
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setMostrarPassword(!mostrarPassword)}
                   className="toggle-btn"
+                  title={mostrarPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                  aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
                 >
-                  {mostrarPassword ? 'Ocultar' : 'Mostrar'}
+                  {mostrarPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
@@ -177,7 +231,7 @@ export const LoginPage: React.FC = () => {
             <div className="input-group">
               <label className="input-label">Verificación de Seguridad (CAPTCHA)</label>
               <div className="captcha-row">
-                <div className="captcha-box" style={{ padding: '0.25rem 0.5rem' }}>
+                <div className="captcha-box">
                   <canvas
                     ref={canvasRef}
                     width={145}
@@ -189,25 +243,27 @@ export const LoginPage: React.FC = () => {
                     onClick={cargarCaptcha}
                     title="Generar nuevo código"
                     className="refresh-btn"
+                    aria-label="Generar nuevo código"
                   >
-                    🔄
+                    <RefreshCw size={15} />
                   </button>
                 </div>
                 <input
                   type="text"
-                  placeholder="Código"
+                  placeholder="CÓDIGO"
                   maxLength={5}
                   value={captchaAnswer}
                   onChange={(e) => setCaptchaAnswer(e.target.value.toUpperCase())}
                   required
                   className="captcha-input"
-                  style={{ textTransform: 'uppercase', letterSpacing: '2px' }}
+                  autoComplete="off"
                 />
               </div>
             </div>
 
             <button type="submit" disabled={cargando} className="submit-btn">
-              {cargando ? 'Verificando credenciales...' : 'Ingresar al Panel'}
+              <span>{cargando ? 'Verificando credenciales…' : 'Ingresar al Panel'}</span>
+              {!cargando && <ArrowRight size={16} />}
             </button>
           </form>
         </div>
