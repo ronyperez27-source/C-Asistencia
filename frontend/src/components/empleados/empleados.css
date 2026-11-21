@@ -1,0 +1,723 @@
+/* ============================================================
+   Estilos del Módulo de Empleados — Grifo El Huamanguino
+   Fija explícitamente color de texto y fondo en todos los
+   controles de formulario para evitar herencia de blanco/dark.
+   ============================================================ */
+
+/* ── Reset de color en inputs/select/option (Fix #1) ───────── */
+.emp-form input,
+.emp-form select,
+.emp-form select option {
+  color: #0f172a;
+  background-color: #ffffff;
+}
+
+.emp-form input::placeholder {
+  color: #94a3b8;
+}
+
+/* ── Tarjeta contenedora genérica ───────────────────────────── */
+.emp-card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+/* ── Formulario ─────────────────────────────────────────────── */
+.emp-form {
+  padding: 1.75rem;
+}
+
+.emp-form__title {
+  margin: 0 0 1.25rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.75rem;
+}
+
+.emp-form__field {
+  margin-bottom: 1rem;
+}
+
+.emp-form__field--last {
+  margin-bottom: 1.5rem;
+}
+
+.emp-form__label {
+  display: block;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 0.3rem;
+}
+
+.emp-form__required {
+  color: #dc2626;
+}
+
+.emp-form__input,
+.emp-form__select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.emp-form__input--error,
+.emp-form__select--error {
+  border-color: #dc2626;
+}
+
+.emp-form__select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.emp-form__hint {
+  font-size: 0.76rem;
+  color: #94a3b8;
+  margin-top: 0.2rem;
+  display: block;
+}
+
+.emp-form__error {
+  color: #dc2626;
+  font-size: 0.78rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.emp-form__submit {
+  width: 100%;
+  background-color: #1d4ed8;
+  color: #ffffff;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  letter-spacing: 0.02em;
+  font-family: inherit;
+}
+
+.emp-form__submit:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+/* ── Placeholder de fotocheck ───────────────────────────────── */
+.emp-fotocheck-placeholder {
+  background-color: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: #94a3b8;
+}
+
+.emp-fotocheck-placeholder__icon {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.emp-fotocheck-placeholder__text {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MÓDULO DE FOTOCHECK — GRIFO EL HUAMANGUINO
+   Plantilla oficial: /model-fotocheck.jpg
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Contenedor UI de la tarjeta y sus controles (pantalla) ── */
+.emp-fotocheck-container {
+  background-color: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+  border: 1px solid #e2e8f0;
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* Header modal/panel (solo pantalla) */
+.emp-fotocheck-ui-header {
+  background-color: #0f172a;
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #22c55e;
+}
+
+.emp-fotocheck-ui-badge {
+  color: #22c55e;
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.emp-fotocheck-ui-title {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-top: 0.1rem;
+}
+
+.emp-fotocheck-ui-close {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.emp-fotocheck-ui-close:hover {
+  color: #ffffff;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CREDENCIAL IMPRIMIBLE:
+   - Fondo: /model-fotocheck.jpg con proporción vertical exacta (1696x2528)
+   - Solo 4 elementos superpuestos
+   ═══════════════════════════════════════════════════════════════ */
+.emp-fotocheck-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1696 / 2528;
+  background-image: url('/model-fotocheck.jpg');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* 1. Nombre del empleado (en blanco, negrita, mayúsculas, centrado) */
+.emp-fotocheck-card__nombre {
+  position: absolute;
+  top: 40.5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 86%;
+  text-align: center;
+  color: #ffffff;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 1.05rem;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 2. Cargo / Ocupación en píldora naranja-dorada */
+.emp-fotocheck-card__cargo {
+  position: absolute;
+  top: 47.8%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #c98528 0%, #e5a33c 100%);
+  color: #ffffff;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  padding: 0.22rem 0.95rem;
+  border-radius: 9999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* 3. Código QR encajado en el recuadro blanco de la plantilla */
+.emp-fotocheck-card__qr {
+  position: absolute;
+  top: 55.3%;
+  left: 29.95%;
+  width: 40.2%;
+  height: 26.66%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 4px;
+}
+
+/* 4. Código de marcaje puro (EESH-...) en dorado debajo del cuadro QR */
+.emp-fotocheck-card__codigo {
+  position: absolute;
+  top: 86.6%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 86%;
+  text-align: center;
+  color: #f59e0b;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+/* ── Controles externos: Tarifa y botones de acción (no-print) ── */
+.emp-fotocheck-controles {
+  padding: 1rem 1.25rem;
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.emp-fotocheck-tarifa-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.83rem;
+  color: #475569;
+  margin-bottom: 0.85rem;
+  padding: 0.55rem 0.85rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.emp-fotocheck-tarifa-label {
+  font-weight: 600;
+}
+
+.emp-fotocheck-tarifa-monto {
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.emp-fotocheck-btn-group {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.emp-fotocheck-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 9px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.emp-fotocheck-btn--print {
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+
+.emp-fotocheck-btn--print:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.emp-fotocheck-btn--download {
+  background-color: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.25);
+}
+
+.emp-fotocheck-btn--download:hover {
+  background-color: #1e40af;
+}
+
+.emp-fotocheck-help {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  margin: 0.75rem 0 0;
+  line-height: 1.45;
+}
+
+/* ── Tabla de empleados ─────────────────────────────────────── */
+.emp-tabla {
+  background-color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.emp-tabla__header {
+  padding: 1.1rem 1.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.emp-tabla__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.emp-tabla__badge {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.emp-tabla__empty,
+.emp-tabla__loading {
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.emp-tabla__empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.emp-tabla__empty p,
+.emp-tabla__loading p {
+  font-weight: 600;
+  margin: 0;
+}
+
+.emp-tabla__scroll {
+  overflow-x: auto;
+}
+
+.emp-tabla table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.emp-tabla thead tr {
+  background-color: #f8fafc;
+}
+
+.emp-tabla th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  color: #475569;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.emp-tabla__row--even {
+  background-color: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.emp-tabla__row--odd {
+  background-color: #fafafa;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.emp-tabla td {
+  padding: 0.7rem 1rem;
+  color: #0f172a;
+}
+
+.emp-tabla__badge--supervisor {
+  background-color: #ede9fe;
+  color: #7c3aed;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.emp-tabla__badge--empleado {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.emp-tabla__badge--activo {
+  background-color: #dcfce7;
+  color: #166534;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.emp-tabla__badge--inactivo {
+  background-color: #fef2f2;
+  color: #991b1b;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.emp-tabla__codigo {
+  background-color: #f1f5f9;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #0369a1;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-family: ui-monospace, Consolas, monospace;
+}
+
+.emp-tabla__btn-ver-qr {
+  background-color: #0284c7;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: inherit;
+}
+
+.emp-tabla__btn-ver-qr:hover {
+  background-color: #0369a1;
+}
+
+/* ── Modal de Detalle / Fotocheck ────────────────────────────── */
+.emp-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+}
+
+.emp-modal-dialog {
+  width: 100%;
+  max-width: 380px;
+  max-height: 92vh;
+  overflow-y: auto;
+  border-radius: 18px;
+  animation: empFadeIn 0.2s ease-out;
+}
+
+@keyframes empFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   IMPRESIÓN OFICIAL — FOTOCHECK 1 PÁGINA (1/1)
+   ═══════════════════════════════════════════════════════════════ */
+@media print {
+  @page {
+    size: 85mm 135mm;
+    margin: 0;
+  }
+
+  html,
+  body {
+    width: 85mm !important;
+    height: 135mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    overflow: hidden !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Ocultar toda la interfaz web */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Ocultar elementos marcados como no-print */
+  .no-print,
+  .no-print * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Anular transformaciones o restricciones de contenedores padres */
+  html, body, #root, .emp-page, .emp-page__inner, .emp-page__grid, .emp-modal-backdrop, .emp-modal-dialog, .emp-card, .emp-fotocheck-container {
+    overflow: visible !important;
+    transform: none !important;
+    max-height: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Hacer visible exclusivamente la tarjeta credencial */
+  #fotocheck-imprimible,
+  #fotocheck-imprimible * {
+    visibility: visible !important;
+  }
+
+  #fotocheck-imprimible {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 85mm !important;
+    height: 135mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background-image: url('/model-fotocheck.jpg') !important;
+    background-size: 100% 100% !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Tipografía nítida ajustada a escala física */
+  .emp-fotocheck-card__nombre {
+    font-size: 12pt !important;
+    text-shadow: none !important;
+    color: #ffffff !important;
+  }
+
+  .emp-fotocheck-card__cargo {
+    font-size: 8.5pt !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    background: #c98528 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .emp-fotocheck-card__codigo {
+    font-size: 11pt !important;
+    color: #f59e0b !important;
+    text-shadow: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* ── Alertas globales ───────────────────────────────────────── */
+.emp-alerta {
+  padding: 0.9rem 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.emp-alerta--exito {
+  background-color: #dcfce7;
+  border: 1px solid #22c55e;
+  color: #166534;
+  font-weight: 600;
+}
+
+.emp-alerta--dni-dup {
+  background-color: #fef2f2;
+  border: 2px solid #dc2626;
+  color: #991b1b;
+  font-weight: 700;
+  font-size: 0.97rem;
+}
+
+.emp-alerta--error {
+  background-color: #fff7ed;
+  border: 1px solid #f97316;
+  color: #9a3412;
+  font-weight: 600;
+}
+
+/* ── Layout principal de la página ─────────────────────────── */
+.emp-page {
+  min-height: 100vh;
+  background-color: #f1f5f9;
+  padding: 2rem;
+  font-family: system-ui, sans-serif;
+}
+
+.emp-page__inner {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.emp-page__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 720px) {
+  .emp-page__grid {
+    grid-template-columns: 1fr;
+  }
+}

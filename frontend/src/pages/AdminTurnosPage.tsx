@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import AdminHeader from '../components/AdminHeader';
 
 interface Turno {
   id: number;
@@ -16,7 +17,7 @@ export default function AdminTurnosPage() {
 
   const cargarTurnos = async () => {
     try {
-      const res = await fetch('http://localhost:8000/turnos/');
+      const res = await fetch('http://localhost:8000/api/v1/turnos/');
       if (res.ok) {
         const data = await res.json();
         setTurnos(data);
@@ -40,7 +41,7 @@ export default function AdminTurnosPage() {
 
   const guardarTurno = async (turno: Turno) => {
     setMensaje('');
-    const res = await fetch(`http://localhost:8000/turnos/${turno.id}`, {
+    const res = await fetch(`http://localhost:8000/api/v1/turnos/${turno.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -57,28 +58,10 @@ export default function AdminTurnosPage() {
     }
   };
 
-  const cerrarSesion = () => {
-    localStorage.removeItem('token_admin');
-    window.location.href = '/';
-  };
-
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f1f5f9', padding: '2rem', fontFamily: 'system-ui, sans-serif' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', backgroundColor: '#0f172a', color: '#fff', padding: '1.25rem 1.75rem', borderRadius: '12px' }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: '1.4rem' }}>Grifo El Huamanguino — Panel de Administración</h1>
-            <p style={{ margin: '0.25rem 0 0', color: '#94a3b8', fontSize: '0.9rem' }}>Configuración de Turnos y Tolerancia de Puntualidad</p>
-          </div>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <a href="/marcaje" style={{ backgroundColor: '#0284c7', color: '#fff', padding: '0.6rem 1rem', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
-              Ir a Kiosco
-            </a>
-            <button onClick={cerrarSesion} style={{ backgroundColor: '#dc2626', color: '#fff', border: 'none', padding: '0.6rem 1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>
-              Cerrar Sesión
-            </button>
-          </div>
-        </header>
+        <AdminHeader paginaActiva="turnos" />
 
         {mensaje && (
           <div style={{ backgroundColor: '#dcfce7', border: '1px solid #22c55e', color: '#166534', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontWeight: 600 }}>
