@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Clock, CheckCircle2, Save, AlertCircle } from 'lucide-react';
 import AdminLayout from '../components/AdminLayout';
+import { API_BASE_URL } from '../config/api';
 
 interface Turno {
   id: number;
@@ -19,7 +20,7 @@ export default function AdminTurnosPage() {
 
   const cargarTurnos = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/v1/turnos/');
+      const res = await fetch(`${API_BASE_URL}/turnos/`);
       if (res.ok) {
         const data = await res.json();
         setTurnos(data);
@@ -45,7 +46,7 @@ export default function AdminTurnosPage() {
     setMensaje('');
     setGuardandoId(turno.id);
     try {
-      const res = await fetch(`http://localhost:8000/api/v1/turnos/${turno.id}`, {
+      const res = await fetch(`${API_BASE_URL}/turnos/${turno.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

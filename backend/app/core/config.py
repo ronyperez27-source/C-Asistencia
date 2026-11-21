@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 480
 
+    # Orígenes permitidos por CORS, separados por coma.
+    # Ej. producción: "https://asistencia.huamanguino.pe,https://admin.huamanguino.pe"
+    CORS_ORIGINS: str = "http://localhost:5173"
+
     DB_SERVER: Optional[str] = None
     DB_NAME: Optional[str] = None
     DB_USER: Optional[str] = None

@@ -700,7 +700,6 @@
     overflow: hidden !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    color-adjust: exact !important;
   }
 
   /* Ocultar toda la interfaz web */
@@ -716,7 +715,16 @@
   }
 
   /* Anular transformaciones o restricciones de contenedores padres */
-  html, body, #root, .emp-page, .emp-page__inner, .emp-page__grid, .emp-modal-backdrop, .emp-modal-dialog, .emp-card, .emp-fotocheck-container {
+  html,
+  body,
+  #root,
+  .emp-page,
+  .emp-page__inner,
+  .emp-page__grid,
+  .emp-modal-backdrop,
+  .emp-modal-dialog,
+  .emp-card,
+  .emp-fotocheck-container {
     overflow: visible !important;
     transform: none !important;
     max-height: none !important;
@@ -752,7 +760,6 @@
     background-repeat: no-repeat !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    color-adjust: exact !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }

@@ -8,16 +8,40 @@ import {
   Radio,
 } from 'lucide-react';
 import './MarcajeKiosco.css';
+import { API_BASE_URL } from '../config/api';
 
 interface AlertaMarcaje {
   tipo: 'exito' | 'error';
   titulo: string;
   empleado?: string;
+  cargo?: string;
   hora?: string;
+  tipoEvento?: string;
   estado?: string;
+  minutosTardanza?: number;
 }
 
-const API_URL = 'http://localhost:8000/asistencia/marcar';
+interface MarcacionResponse {
+  mensaje: string;
+  empleado_nombres: string;
+  cargo: string;
+  tipo_evento: 'ENTRADA' | 'SALIDA';
+  fecha_hora: string;
+  minutos_tardanza: number;
+}
+
+interface ErrorResponse {
+  detail?: string;
+}
+
+const API_URL = `${API_BASE_URL}/asistencia/marcar`;
+
+// La hora del servidor llega sin zona horaria (America/Lima); se extrae tal cual
+// para no desplazarla según la zona horaria del navegador.
+const formatearHoraServidor = (fechaHora: string): string => {
+  const parteHora = fechaHora.includes('T') ? fechaHora.split('T')[1] : fechaHora;
+  return parteHora.slice(0, 8);
+};
 
 export default function MarcajeKiosco() {
   const [ahora, setAhora] = useState<Date>(new Date());
@@ -51,8 +75,18 @@ export default function MarcajeKiosco() {
     setAlerta(nuevaAlerta);
     timerAlertaRef.current = window.setTimeout(() => {
       setAlerta(null);
+      timerAlertaRef.current = null;
     }, 3000);
   };
+
+  // Limpiar el temporizador si el kiosco se desmonta
+  useEffect(() => {
+    return () => {
+      if (timerAlertaRef.current) {
+        window.clearTimeout(timerAlertaRef.current);
+      }
+    };
+  }, []);
 
   // Enviar código leído al backend
   const procesarCodigo = async (codigoLeido: string) => {
@@ -66,34 +100,50 @@ export default function MarcajeKiosco() {
         body: JSON.stringify({ codigo_qr: codigoLeido }),
       });
 
-      const data = await respuesta.json();
+      const data = (await respuesta.json().catch(() => null)) as
+        | MarcacionResponse
+        | ErrorResponse
+        | null;
 
       if (!respuesta.ok) {
+        const detalle =
+          data && 'detail' in data && data.detail
+            ? data.detail
+            : 'Código ilegible o no registrado en el sistema';
         mostrarAlertaTemporal({
           tipo: 'error',
           titulo: 'LECTURA RECHAZADA',
-          estado: data.detail || 'Código ilegible o no registrado en el sistema',
+          estado: detalle,
         });
         return;
       }
 
-      const horaFormateada = new Date(data.fecha_hora).toLocaleTimeString('es-PE', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      });
+      if (!data || !('mensaje' in data)) {
+        mostrarAlertaTemporal({
+          tipo: 'error',
+          titulo: 'RESPUESTA INVÁLIDA',
+          estado: 'El servidor devolvió una respuesta inesperada',
+        });
+        return;
+      }
 
-      // Extraer estado ("A tiempo" / "Tardanza" / "Completado")
-      const estadoTexto = data.mensaje.includes('-')
-        ? data.mensaje.split('-')[1].trim()
-        : data.mensaje;
+      const estado =
+        data.tipo_evento === 'SALIDA'
+          ? 'Completado'
+          : data.mensaje.toLowerCase().includes('tardanza')
+            ? 'Tardanza'
+            : 'A tiempo';
 
       mostrarAlertaTemporal({
         tipo: 'exito',
         titulo: data.mensaje,
         empleado: data.empleado_nombres,
-        hora: horaFormateada,
-        estado: estadoTexto,
+        cargo: data.cargo,
+        hora: formatearHoraServidor(data.fecha_hora),
+        tipoEvento: data.tipo_evento,
+        estado,
+        minutosTardanza:
+          data.tipo_evento === 'ENTRADA' ? data.minutos_tardanza : 0,
       });
     } catch {
       mostrarAlertaTemporal({
@@ -193,9 +243,16 @@ export default function MarcajeKiosco() {
             </div>
             <p className="alerta-titulo">{alerta.titulo}</p>
             <p className="alerta-empleado">{alerta.empleado}</p>
+            {alerta.cargo && <p className="alerta-cargo">{alerta.cargo}</p>}
             <div className="alerta-detalles-row">
-              <span className="alerta-badge">Hora: {alerta.hora}</span>
+              <span className="alerta-badge">Hora servidor: {alerta.hora}</span>
+              <span className="alerta-badge">Tipo: {alerta.tipoEvento}</span>
               <span className="alerta-badge">Estado: {alerta.estado}</span>
+              {(alerta.minutosTardanza ?? 0) > 0 && (
+                <span className="alerta-badge alerta-badge--tardanza">
+                  Tardanza: {alerta.minutosTardanza} min
+                </span>
+              )}
             </div>
           </div>
         ) : (

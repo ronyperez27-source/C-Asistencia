@@ -1,6 +1,8 @@
 // ─── types/empleado.ts ───────────────────────────────────────────────────────
 // Tipos compartidos entre los subcomponentes del módulo de empleados.
 
+import { API_BASE_URL } from '../../config/api';
+
 export interface EmpleadoResponse {
   id: number;
   dni: string;
@@ -34,4 +36,4 @@ export const FORM_INICIAL: FormData = {
 
 export const CARGOS_OPERATIVOS = ['Empleado', 'Supervisor'] as const;
 
-export const API_EMPLEADOS = 'http://localhost:8000/api/v1/empleados/';
+export const API_EMPLEADOS = `${API_BASE_URL}/empleados/`;

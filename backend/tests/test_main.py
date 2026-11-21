@@ -8,3 +8,9 @@ def test_read_root():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"mensaje": "API conectada a SQL Server correctamente"}
+
+
+def test_health():
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}

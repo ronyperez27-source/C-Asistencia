@@ -45,9 +45,21 @@ def registrar_marca(db: Session, codigo_qr: str, timestamp_servidor: datetime) -
     tipo_evento = "SALIDA" if (ultima_marca and ultima_marca.tipo_evento == "ENTRADA") else "ENTRADA"
 
     # 4. Evaluar puntualidad (ejemplo: turno 06:00 AM -> 05:58 AM es "A tiempo")
+    minutos_tardanza = 0
     if tipo_evento == "ENTRADA":
         hora_limite = time(6, 0)
-        estado = "A tiempo" if timestamp_servidor.time() <= hora_limite else "Tardanza"
+        # Normalizamos segundos para comparar contra el minuto exacto del límite
+        hora_marcaje = timestamp_servidor.time().replace(second=0, microsecond=0)
+
+        if hora_marcaje <= hora_limite:
+            estado = "A tiempo"
+        else:
+            estado = "Tardanza"
+            limite_dt = datetime.combine(timestamp_servidor.date(), hora_limite)
+            minutos_tardanza = max(
+                0, int((timestamp_servidor - limite_dt).total_seconds() // 60)
+            )
+
         mensaje = f"Entrada Registrada - {estado}"
     else:
         estado = "Completado"
@@ -69,5 +81,6 @@ def registrar_marca(db: Session, codigo_qr: str, timestamp_servidor: datetime) -
         "empleado_nombres": empleado.nombres,
         "cargo": empleado.cargo,
         "tipo_evento": tipo_evento,
-        "fecha_hora": nueva_asistencia.fecha_hora
+        "fecha_hora": nueva_asistencia.fecha_hora,
+        "minutos_tardanza": minutos_tardanza
     }

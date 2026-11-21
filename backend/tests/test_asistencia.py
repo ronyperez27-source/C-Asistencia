@@ -44,7 +44,49 @@ def test_registrar_marca_valida_a_tiempo(db_session):
     assert resultado["empleado_nombres"] == "Carlos Mendoza"
     assert resultado["tipo_evento"] == "ENTRADA"
     assert resultado["fecha_hora"] == hora_servidor
+    assert resultado["minutos_tardanza"] == 0
     assert db_session.query(AsistenciaModel).count() == 1
+
+
+def test_registrar_marca_tardanza_calcula_minutos(db_session):
+    empleado = EmpleadoModel(
+        dni="71234568",
+        nombres="Lucía Quispe",
+        cargo="Grifero",
+        tarifa_hora=12.5,
+        codigo_qr="QR-GRIFO-002",
+        activo=True
+    )
+    db_session.add(empleado)
+    db_session.commit()
+
+    # Entrada 7 minutos después del límite de las 06:00 AM
+    hora_servidor = datetime(2026, 11, 17, 6, 7, 30)
+    resultado = registrar_marca(db_session, "QR-GRIFO-002", hora_servidor)
+
+    assert resultado["mensaje"] == "Entrada Registrada - Tardanza"
+    assert resultado["tipo_evento"] == "ENTRADA"
+    assert resultado["minutos_tardanza"] == 7
+
+
+def test_registrar_salida_no_acumula_tardanza(db_session):
+    empleado = EmpleadoModel(
+        dni="71234569",
+        nombres="Ana Torres",
+        cargo="Supervisor",
+        tarifa_hora=15.0,
+        codigo_qr="QR-GRIFO-003",
+        activo=True
+    )
+    db_session.add(empleado)
+    db_session.commit()
+
+    registrar_marca(db_session, "QR-GRIFO-003", datetime(2026, 11, 17, 5, 55, 0))
+    resultado = registrar_marca(db_session, "QR-GRIFO-003", datetime(2026, 11, 17, 14, 3, 0))
+
+    assert resultado["mensaje"] == "Salida Registrada"
+    assert resultado["tipo_evento"] == "SALIDA"
+    assert resultado["minutos_tardanza"] == 0
 
 def test_registrar_marca_codigo_inexistente(db_session):
     hora_servidor = datetime(2026, 11, 17, 6, 0, 0)

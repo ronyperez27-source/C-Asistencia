@@ -205,6 +205,15 @@
   color: #ffffff;
 }
 
+.alerta-cargo {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+}
+
 .alerta-detalles-row {
   display: flex;
   gap: 1rem;
@@ -222,6 +231,12 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-variant-numeric: tabular-nums;
   border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.alerta-badge--tardanza {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: rgba(251, 191, 36, 0.7);
+  color: #fef3c7;
 }
 
 /* ── Pie de página del Kiosco ───────────────────────────────── */
