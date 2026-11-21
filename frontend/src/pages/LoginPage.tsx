@@ -11,6 +11,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import './LoginPage.css';
+import { API_BASE_URL } from '../config/api';
 
 export const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -76,7 +77,7 @@ export const LoginPage: React.FC = () => {
 
   const cargarCaptcha = async () => {
     try {
-      const { data } = await axios.get('http://localhost:8000/api/v1/auth/captcha');
+      const { data } = await axios.get(`${API_BASE_URL}/auth/captcha`);
       setCaptchaCodigo(data.pregunta);
       setCaptchaToken(data.captcha_token);
       setCaptchaAnswer('');
@@ -101,7 +102,7 @@ export const LoginPage: React.FC = () => {
     setCargando(true);
 
     try {
-      const { data } = await axios.post('http://localhost:8000/api/v1/auth/login', {
+      const { data } = await axios.post(`${API_BASE_URL}/auth/login`, {
         username,
         password,
         captcha_token: captchaToken,

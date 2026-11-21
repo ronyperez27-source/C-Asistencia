@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.config import get_settings
 from app.core.database import engine, Base
 from app.models.empleado import EmpleadoModel
 from app.models.usuario import Usuario
@@ -29,9 +30,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+settings = get_settings()
+origenes_cors = [origen.strip() for origen in settings.CORS_ORIGINS.split(",") if origen.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=origenes_cors,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -47,3 +51,8 @@ app.include_router(planilla_router, prefix="/api/v1")
 @app.get("/")
 def inicio():
     return {"mensaje": "API conectada a SQL Server correctamente"}
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}

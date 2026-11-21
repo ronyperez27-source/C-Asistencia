@@ -10,3 +10,8 @@ class MarcacionResponse(BaseModel):
     cargo: str
     tipo_evento: str
     fecha_hora: datetime
+    minutos_tardanza: int = Field(
+        default=0,
+        ge=0,
+        description="Minutos de tardanza acumulados en la entrada (0 si es salida o llegó a tiempo)",
+    )
