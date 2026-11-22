@@ -1,9 +1,9 @@
 import React from 'react';
-import { Clock, Users, Monitor, LogOut } from 'lucide-react';
+import { Clock, Users, Wallet, Monitor, LogOut } from 'lucide-react';
 import './AdminLayout.css';
 
 interface AdminLayoutProps {
-  paginaActiva: 'turnos' | 'empleados';
+  paginaActiva: 'turnos' | 'empleados' | 'planilla';
   titulo?: string;
   subtitulo?: string;
   children: React.ReactNode;
@@ -62,6 +62,15 @@ export default function AdminLayout({
             >
               <Users size={16} />
               <span>Empleados</span>
+            </a>
+            <a
+              href="/admin/planilla"
+              className={`admin-tab ${
+                paginaActiva === 'planilla' ? 'admin-tab--active' : 'admin-tab--inactive'
+              }`}
+            >
+              <Wallet size={16} />
+              <span>Planilla</span>
             </a>
           </nav>
 

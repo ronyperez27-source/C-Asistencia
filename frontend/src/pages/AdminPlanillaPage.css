@@ -1,0 +1,553 @@
+/* ============================================================
+   AdminPlanillaPage.css — Cierre Mensual de Planilla
+   Grifo El Huamanguino · Azul petróleo + naranja combustible
+   ============================================================ */
+
+.planilla-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Barra de filtros ───────────────────────────────────────── */
+.planilla-filtros {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.15rem 1.4rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05);
+}
+
+.planilla-filtros__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 150px;
+}
+
+.planilla-filtros__label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+
+.planilla-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.planilla-select-wrap > svg {
+  position: absolute;
+  left: 0.72rem;
+  color: #ea580c;
+  pointer-events: none;
+}
+
+.planilla-select-wrap select {
+  width: 100%;
+  padding: 0.6rem 0.85rem 0.6rem 2.2rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.planilla-select-wrap select:hover {
+  border-color: #94a3b8;
+}
+
+.planilla-select-wrap select:focus {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
+}
+
+.planilla-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.62rem 1.15rem;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.planilla-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.planilla-btn--primary {
+  background-color: #ea580c;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(234, 88, 12, 0.25);
+}
+
+.planilla-btn--primary:hover:not(:disabled) {
+  background-color: #c2410c;
+}
+
+.planilla-btn--outline {
+  background-color: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.planilla-btn--outline:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.planilla-filtros__meta {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.planilla-filtros__meta strong {
+  color: #0f172a;
+}
+
+.planilla-filtros__stamp {
+  font-size: 0.73rem;
+  color: #94a3b8;
+}
+
+/* ── Tarjetas de resumen ────────────────────────────────────── */
+.planilla-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.planilla-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.35rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05);
+}
+
+.planilla-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  background-color: var(--planilla-card-accent, #ea580c);
+}
+
+.planilla-card--empleados {
+  --planilla-card-accent: #0f766e;
+  --planilla-card-soft: #ecfdf5;
+  --planilla-card-border: #a7f3d0;
+}
+
+.planilla-card--minutos {
+  --planilla-card-accent: #d97706;
+  --planilla-card-soft: #fffbeb;
+  --planilla-card-border: #fde68a;
+}
+
+.planilla-card--monto {
+  --planilla-card-accent: #dc2626;
+  --planilla-card-soft: #fef2f2;
+  --planilla-card-border: #fecaca;
+}
+
+.planilla-card__icon {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: var(--planilla-card-soft, #fff7ed);
+  border: 1px solid var(--planilla-card-border, #ffedd5);
+  color: var(--planilla-card-accent, #ea580c);
+}
+
+.planilla-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.planilla-card__label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.planilla-card__value {
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  font-variant-numeric: tabular-nums;
+}
+
+.planilla-card__unit {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.planilla-card__hint {
+  font-size: 0.73rem;
+  color: #94a3b8;
+}
+
+/* ── Tabla consolidada ──────────────────────────────────────── */
+.planilla-tabla {
+  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05);
+}
+
+.planilla-tabla__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.1rem 1.4rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.planilla-tabla__header-main {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.planilla-tabla__icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: #fff7ed;
+  border: 1px solid #ffedd5;
+  color: #ea580c;
+}
+
+.planilla-tabla__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.planilla-tabla__subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.planilla-tabla__stamp {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  background-color: #f1f5f9;
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.planilla-tabla__scroll {
+  overflow-x: auto;
+}
+
+.planilla-tabla table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.planilla-tabla thead th {
+  padding: 0.8rem 1rem;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.055em;
+  color: #475569;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.planilla-tabla tbody td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.88rem;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.planilla-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.planilla-tabla__fila--alterna {
+  background-color: #fcfdff;
+}
+
+.planilla-tabla tbody tr:hover {
+  background-color: #fff7ed;
+}
+
+.planilla-tabla th.planilla-tabla__num,
+.planilla-tabla td.planilla-tabla__num {
+  text-align: right;
+}
+
+.planilla-tabla tfoot td {
+  padding: 0.9rem 1rem;
+  background-color: #071426;
+  color: #f8fafc;
+  font-size: 0.85rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.planilla-tabla tfoot .planilla-tabla__total-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+/* ── Celdas específicas ─────────────────────────────────────── */
+.planilla-dni {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background-color: #f1f5f9;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #0f172a;
+}
+
+.planilla-empleado {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 190px;
+}
+
+.planilla-avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #0f2744;
+  color: #f8fafc;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.planilla-empleado__nombre {
+  display: block;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.planilla-empleado__id {
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.planilla-cargo {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  background-color: #f1f5f9;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.planilla-cargo--supervisor {
+  background-color: #fff7ed;
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+
+.planilla-minutos {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.planilla-minutos--alerta {
+  color: #c2410c;
+}
+
+.planilla-minutos--ok {
+  color: #64748b;
+  font-weight: 700;
+}
+
+.planilla-minutos small {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.planilla-monto {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: #b91c1c;
+}
+
+.planilla-monto--cero {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+/* ── Estados: carga, vacío y error ──────────────────────────── */
+.planilla-estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.planilla-estado > p {
+  margin: 0;
+  font-weight: 700;
+  color: #334155;
+}
+
+.planilla-estado > span {
+  max-width: 440px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #94a3b8;
+}
+
+.planilla-estado__icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  color: #94a3b8;
+}
+
+.planilla-estado--error > p {
+  color: #b91c1c;
+}
+
+.planilla-estado--error .planilla-estado__icon {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.planilla-estado--error .planilla-btn {
+  margin-top: 0.35rem;
+}
+
+.planilla-spin {
+  animation: planilla-spin 0.9s linear infinite;
+}
+
+@keyframes planilla-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .planilla-spin {
+    animation: none;
+  }
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .planilla-resumen {
+    grid-template-columns: 1fr;
+  }
+
+  .planilla-filtros__meta {
+    width: 100%;
+    margin-left: 0;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .planilla-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .planilla-filtros__campo,
+  .planilla-btn {
+    width: 100%;
+  }
+
+  .planilla-card__value {
+    font-size: 1.4rem;
+  }
+}
