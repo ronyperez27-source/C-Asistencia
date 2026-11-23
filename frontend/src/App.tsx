@@ -1,8 +1,21 @@
+import { useEffect, type ReactNode } from 'react';
 import { Monitor } from 'lucide-react';
 import { LoginPage } from './pages/LoginPage';
 import MarcajeKiosco from './pages/MarcajeKiosco';
 import AdminTurnosPage from './pages/AdminTurnosPage';
 import AdminEmpleadosPage from './pages/AdminEmpleadosPage';
+import AdminPlanillaPage from './pages/AdminPlanillaPage';
+
+function RutaProtegida({ children }: { children: ReactNode }) {
+  const autenticado = Boolean(localStorage.getItem('token_admin'));
+
+  useEffect(() => {
+    if (!autenticado) window.location.replace('/');
+  }, [autenticado]);
+
+  if (!autenticado) return null;
+  return <>{children}</>;
+}
 
 function App() {
   const rutaActual = window.location.pathname;
@@ -17,6 +30,14 @@ function App() {
 
   if (rutaActual === '/admin/empleados') {
     return <AdminEmpleadosPage />;
+  }
+
+  if (rutaActual === '/admin/planilla') {
+    return (
+      <RutaProtegida>
+        <AdminPlanillaPage />
+      </RutaProtegida>
+    );
   }
 
   return (

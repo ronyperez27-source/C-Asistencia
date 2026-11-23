@@ -1,9 +1,9 @@
-import React from 'react';
-import { Clock, Users, Monitor, LogOut } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Clock, Users, Wallet, Monitor, LogOut, Menu, X } from 'lucide-react';
 import './AdminLayout.css';
 
 interface AdminLayoutProps {
-  paginaActiva: 'turnos' | 'empleados';
+  paginaActiva: 'turnos' | 'empleados' | 'planilla';
   titulo?: string;
   subtitulo?: string;
   children: React.ReactNode;
@@ -15,10 +15,28 @@ export default function AdminLayout({
   subtitulo,
   children,
 }: AdminLayoutProps) {
+  const [menuAbierto, setMenuAbierto] = useState(false);
+  const botonMenuRef = useRef<HTMLButtonElement>(null);
+
   const cerrarSesion = () => {
     localStorage.removeItem('token_admin');
     window.location.href = '/';
   };
+
+  const cerrarMenu = () => setMenuAbierto(false);
+
+  useEffect(() => {
+    if (!menuAbierto) return;
+
+    const alPresionarEscape = (evento: KeyboardEvent) => {
+      if (evento.key !== 'Escape') return;
+      setMenuAbierto(false);
+      botonMenuRef.current?.focus();
+    };
+
+    document.addEventListener('keydown', alPresionarEscape);
+    return () => document.removeEventListener('keydown', alPresionarEscape);
+  }, [menuAbierto]);
 
   return (
     <div className="admin-layout">
@@ -43,42 +61,85 @@ export default function AdminLayout({
             </div>
           </div>
 
-          {/* Navegación de pestañas */}
-          <nav className="admin-navbar__nav" aria-label="Navegación del panel">
-            <a
-              href="/admin/turnos"
-              className={`admin-tab ${
-                paginaActiva === 'turnos' ? 'admin-tab--active' : 'admin-tab--inactive'
-              }`}
-            >
-              <Clock size={16} />
-              <span>Turnos</span>
-            </a>
-            <a
-              href="/admin/empleados"
-              className={`admin-tab ${
-                paginaActiva === 'empleados' ? 'admin-tab--active' : 'admin-tab--inactive'
-              }`}
-            >
-              <Users size={16} />
-              <span>Empleados</span>
-            </a>
-          </nav>
+          {/* Botón de menú para tablet y móvil */}
+          <button
+            ref={botonMenuRef}
+            type="button"
+            className="admin-navbar__toggle"
+            aria-label={menuAbierto ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+            aria-expanded={menuAbierto}
+            aria-controls="admin-navbar-menu"
+            onClick={() => setMenuAbierto((abierto) => !abierto)}
+          >
+            {menuAbierto ? (
+              <X size={22} aria-hidden="true" />
+            ) : (
+              <Menu size={22} aria-hidden="true" />
+            )}
+          </button>
 
-          {/* Acciones del sistema */}
-          <div className="admin-navbar__actions">
-            <a href="/marcaje" className="admin-btn-action admin-btn-kiosco" title="Ir a Kiosco de Marcaje">
-              <Monitor size={15} />
-              <span>Ir a Kiosco</span>
-            </a>
-            <button
-              onClick={cerrarSesion}
-              className="admin-btn-action admin-btn-logout"
-              title="Cerrar sesión administrativa"
-            >
-              <LogOut size={15} />
-              <span>Cerrar Sesión</span>
-            </button>
+          {/* Navegación y acciones del sistema */}
+          <div
+            id="admin-navbar-menu"
+            className={`admin-navbar__menu${
+              menuAbierto ? ' admin-navbar__menu--abierto' : ''
+            }`}
+          >
+            <nav className="admin-navbar__nav" aria-label="Navegación del panel">
+              <a
+                href="/admin/turnos"
+                className={`admin-tab ${
+                  paginaActiva === 'turnos' ? 'admin-tab--active' : 'admin-tab--inactive'
+                }`}
+                aria-current={paginaActiva === 'turnos' ? 'page' : undefined}
+                onClick={cerrarMenu}
+              >
+                <Clock size={16} aria-hidden="true" />
+                <span>Turnos</span>
+              </a>
+              <a
+                href="/admin/empleados"
+                className={`admin-tab ${
+                  paginaActiva === 'empleados' ? 'admin-tab--active' : 'admin-tab--inactive'
+                }`}
+                aria-current={paginaActiva === 'empleados' ? 'page' : undefined}
+                onClick={cerrarMenu}
+              >
+                <Users size={16} aria-hidden="true" />
+                <span>Empleados</span>
+              </a>
+              <a
+                href="/admin/planilla"
+                className={`admin-tab ${
+                  paginaActiva === 'planilla' ? 'admin-tab--active' : 'admin-tab--inactive'
+                }`}
+                aria-current={paginaActiva === 'planilla' ? 'page' : undefined}
+                onClick={cerrarMenu}
+              >
+                <Wallet size={16} aria-hidden="true" />
+                <span>Planilla</span>
+              </a>
+            </nav>
+
+            <div className="admin-navbar__actions">
+              <a
+                href="/marcaje"
+                className="admin-btn-action admin-btn-kiosco"
+                title="Ir a Kiosco de Marcaje"
+                onClick={cerrarMenu}
+              >
+                <Monitor size={15} aria-hidden="true" />
+                <span>Ir a Kiosco</span>
+              </a>
+              <button
+                onClick={cerrarSesion}
+                className="admin-btn-action admin-btn-logout"
+                title="Cerrar sesión administrativa"
+              >
+                <LogOut size={15} aria-hidden="true" />
+                <span>Cerrar Sesión</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -87,7 +148,7 @@ export default function AdminLayout({
       <main className="admin-content">
         {(titulo || subtitulo) && (
           <div className="admin-page-header no-print">
-            <div>
+            <div className="admin-page-header__text">
               {titulo && <h1 className="admin-page-header__title">{titulo}</h1>}
               {subtitulo && <p className="admin-page-header__subtitle">{subtitulo}</p>}
             </div>
