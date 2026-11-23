@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertCircle,
   CalendarDays,
+  Clock,
+  FileSpreadsheet,
+  FileText,
   Inbox,
   LoaderCircle,
   RefreshCw,
@@ -15,21 +18,18 @@ import { API_BASE_URL } from '../config/api';
 import './AdminPlanillaPage.css';
 
 // ─── Contrato real de GET /planilla/cierre-mensual ───────────────────────────
-// (backend/app/schemas/planilla.py → DescuentoTardanzaResponse)
+// (backend/app/schemas/planilla.py → CierreMensualItemResponse)
 interface CierreMensualItem {
-  empleado_id: number | null;
-  dni: string | null;
-  nombres: string | null;
-  tarifa_hora: number;
-  tarifa_minuto: number;
+  empleado_id: number;
+  dni: string;
+  nombres: string;
+  cargo: string;
+  horas_trabajadas: number;
   minutos_tardanza: number;
   monto_descuento: number;
 }
 
-interface EmpleadoCargo {
-  dni: string;
-  cargo: string;
-}
+type FormatoExportacion = 'excel' | 'pdf';
 
 const MESES = [
   'Enero',
@@ -72,6 +72,10 @@ function formatearSoles(monto: number): string {
   return `S/ ${formatoMoneda.format(Number.isFinite(monto) ? monto : 0)}`;
 }
 
+function formatearHoras(horas: number): string {
+  return `${formatoMoneda.format(Number.isFinite(horas) ? horas : 0)} h`;
+}
+
 function obtenerIniciales(nombres: string | null): string {
   if (!nombres || !nombres.trim()) return '?';
   return nombres
@@ -91,8 +95,12 @@ export default function AdminPlanillaPage() {
   const [error, setError] = useState<string | null>(null);
   const [actualizadoEn, setActualizadoEn] = useState<Date | null>(null);
 
-  // El endpoint de planilla no devuelve "cargo": se completa desde /empleados/.
-  const [cargosPorDni, setCargosPorDni] = useState<Record<string, string>>({});
+  // Indicadores de carga independientes para cada exportación.
+  const [exportando, setExportando] = useState<Record<FormatoExportacion, boolean>>({
+    excel: false,
+    pdf: false,
+  });
+  const [errorExportacion, setErrorExportacion] = useState<string | null>(null);
 
   const solicitudRef = useRef(0);
 
@@ -147,46 +155,79 @@ export default function AdminPlanillaPage() {
     void cargarCierre();
   }, [cargarCierre]);
 
-  // Carga única del catálogo de empleados para mostrar el Cargo.
-  useEffect(() => {
-    let cancelado = false;
+  const exportarReporte = useCallback(
+    async (formato: FormatoExportacion) => {
+      setExportando((previo) => ({ ...previo, [formato]: true }));
+      setErrorExportacion(null);
 
-    const cargarCargos = async () => {
       try {
-        const respuesta = await fetch(`${API_BASE_URL}/empleados/`, {
-          headers: cabecerasAutenticadas(),
-        });
-        if (!respuesta.ok) return;
+        const respuesta = await fetch(
+          `${API_BASE_URL}/planilla/exportar/${formato}?anio=${anio}&mes=${mes}`,
+          { headers: cabecerasAutenticadas() }
+        );
 
-        const empleados: EmpleadoCargo[] = await respuesta.json();
-        if (cancelado) return;
+        if (!respuesta.ok) {
+          let detalle = '';
+          try {
+            const cuerpo = await respuesta.json();
+            if (typeof cuerpo?.detail === 'string') detalle = cuerpo.detail;
+          } catch {
+            /* El backend no devolvió JSON; se usa el mensaje genérico. */
+          }
 
-        const mapa: Record<string, string> = {};
-        for (const empleado of empleados) {
-          if (empleado?.dni && empleado?.cargo) mapa[empleado.dni] = empleado.cargo;
+          if (respuesta.status === 401 || respuesta.status === 403) {
+            throw new Error(
+              'No autorizado. Inicia sesión nuevamente para exportar la planilla.'
+            );
+          }
+          throw new Error(
+            detalle ||
+              `No se pudo generar el archivo ${formato === 'excel' ? 'Excel' : 'PDF'} (HTTP ${respuesta.status}).`
+          );
         }
-        setCargosPorDni(mapa);
-      } catch {
-        /* Si falla, la columna Cargo muestra "—" sin bloquear la planilla. */
-      }
-    };
 
-    void cargarCargos();
-    return () => {
-      cancelado = true;
-    };
-  }, []);
+        const blob = await respuesta.blob();
+        const extension = formato === 'excel' ? 'xlsx' : 'pdf';
+        const mesFormateado = String(mes).padStart(2, '0');
+        const url = URL.createObjectURL(blob);
+
+        const enlace = document.createElement('a');
+        enlace.href = url;
+        enlace.download = `planilla_${anio}_${mesFormateado}.${extension}`;
+        document.body.appendChild(enlace);
+        enlace.click();
+        enlace.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      } catch (err) {
+        setErrorExportacion(
+          err instanceof Error
+            ? err.message
+            : 'Error de red al generar el reporte. Verifica la conexión con el servidor.'
+        );
+      } finally {
+        setExportando((previo) => ({ ...previo, [formato]: false }));
+      }
+    },
+    [anio, mes]
+  );
 
   const totales = useMemo(() => {
+    let horas = 0;
     let minutos = 0;
     let monto = 0;
 
     for (const item of datos) {
+      if (Number.isFinite(item.horas_trabajadas)) horas += item.horas_trabajadas;
       if (Number.isFinite(item.minutos_tardanza)) minutos += item.minutos_tardanza;
       if (Number.isFinite(item.monto_descuento)) monto += item.monto_descuento;
     }
 
-    return { empleados: datos.length, minutos, monto };
+    return {
+      empleados: datos.length,
+      horas: Math.round(horas * 100) / 100,
+      minutos,
+      monto,
+    };
   }, [datos]);
 
   const periodo = `${MESES[mes - 1]} ${anio}`;
@@ -199,60 +240,116 @@ export default function AdminPlanillaPage() {
     <AdminLayout
       paginaActiva="planilla"
       titulo="Cierre Mensual de Planilla"
-      subtitulo="Consolidado de tardanzas y descuentos por trabajador para el periodo seleccionado"
+      subtitulo="Consolidado de horas trabajadas, tardanzas y descuentos por trabajador para el periodo seleccionado"
     >
       <div className="planilla-page">
         {/* ── Filtros de periodo ── */}
         <section className="planilla-filtros" aria-label="Filtros del cierre mensual">
-          <div className="planilla-filtros__campo">
-            <label className="planilla-filtros__label" htmlFor="planilla-mes">
-              Mes
-            </label>
-            <div className="planilla-select-wrap">
-              <CalendarDays size={16} aria-hidden="true" />
-              <select
-                id="planilla-mes"
-                value={mes}
-                onChange={(evento) => setMes(Number(evento.target.value))}
+          <div className="planilla-filtros__barra">
+            <div className="planilla-filtros__campo">
+              <label className="planilla-filtros__label" htmlFor="planilla-mes">
+                Mes
+              </label>
+              <div className="planilla-select-wrap">
+                <CalendarDays size={16} aria-hidden="true" />
+                <select
+                  id="planilla-mes"
+                  value={mes}
+                  onChange={(evento) => setMes(Number(evento.target.value))}
+                >
+                  {MESES.map((nombre, indice) => (
+                    <option key={nombre} value={indice + 1}>
+                      {nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="planilla-filtros__campo">
+              <label className="planilla-filtros__label" htmlFor="planilla-anio">
+                Año
+              </label>
+              <div className="planilla-select-wrap">
+                <CalendarDays size={16} aria-hidden="true" />
+                <select
+                  id="planilla-anio"
+                  value={anio}
+                  onChange={(evento) => setAnio(Number(evento.target.value))}
+                >
+                  {ANIOS_DISPONIBLES.map((valor) => (
+                    <option key={valor} value={valor}>
+                      {valor}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="planilla-btn planilla-btn--primary"
+              onClick={() => void cargarCierre()}
+              disabled={cargando}
+            >
+              <RefreshCw
+                size={16}
+                className={cargando ? 'planilla-spin' : undefined}
+                aria-hidden="true"
+              />
+              <span>{cargando ? 'Consultando…' : 'Actualizar'}</span>
+            </button>
+
+            <div className="planilla-filtros__acciones" aria-label="Exportación de reportes">
+              <button
+                type="button"
+                className="planilla-btn planilla-btn--excel"
+                onClick={() => void exportarReporte('excel')}
+                disabled={exportando.excel}
+                aria-label="Exportar a Excel"
+                aria-busy={exportando.excel}
               >
-                {MESES.map((nombre, indice) => (
-                  <option key={nombre} value={indice + 1}>
-                    {nombre}
-                  </option>
-                ))}
-              </select>
+                {exportando.excel ? (
+                  <LoaderCircle size={16} className="planilla-spin" aria-hidden="true" />
+                ) : (
+                  <FileSpreadsheet size={16} aria-hidden="true" />
+                )}
+                <span className="planilla-btn__label planilla-btn__label--larga">
+                  {exportando.excel ? 'Generando…' : 'Exportar a Excel'}
+                </span>
+                <span
+                  className="planilla-btn__label planilla-btn__label--corta"
+                  aria-hidden="true"
+                >
+                  {exportando.excel ? 'Generando…' : 'Excel'}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="planilla-btn planilla-btn--pdf"
+                onClick={() => void exportarReporte('pdf')}
+                disabled={exportando.pdf}
+                aria-label="Exportar a PDF"
+                aria-busy={exportando.pdf}
+              >
+                {exportando.pdf ? (
+                  <LoaderCircle size={16} className="planilla-spin" aria-hidden="true" />
+                ) : (
+                  <FileText size={16} aria-hidden="true" />
+                )}
+                <span className="planilla-btn__label planilla-btn__label--larga">
+                  {exportando.pdf ? 'Generando…' : 'Exportar a PDF'}
+                </span>
+                <span
+                  className="planilla-btn__label planilla-btn__label--corta"
+                  aria-hidden="true"
+                >
+                  {exportando.pdf ? 'Generando…' : 'PDF'}
+                </span>
+              </button>
             </div>
           </div>
-
-          <div className="planilla-filtros__campo">
-            <label className="planilla-filtros__label" htmlFor="planilla-anio">
-              Año
-            </label>
-            <div className="planilla-select-wrap">
-              <CalendarDays size={16} aria-hidden="true" />
-              <select
-                id="planilla-anio"
-                value={anio}
-                onChange={(evento) => setAnio(Number(evento.target.value))}
-              >
-                {ANIOS_DISPONIBLES.map((valor) => (
-                  <option key={valor} value={valor}>
-                    {valor}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            className="planilla-btn planilla-btn--primary"
-            onClick={() => void cargarCierre()}
-            disabled={cargando}
-          >
-            <RefreshCw size={16} className={cargando ? 'planilla-spin' : undefined} />
-            <span>{cargando ? 'Consultando…' : 'Actualizar'}</span>
-          </button>
 
           <div className="planilla-filtros__meta">
             <span>
@@ -266,14 +363,31 @@ export default function AdminPlanillaPage() {
           </div>
         </section>
 
+        {errorExportacion && (
+          <div className="planilla-export-error" role="alert">
+            <AlertCircle size={18} aria-hidden="true" />
+            <span>{errorExportacion}</span>
+            <button
+              type="button"
+              className="planilla-export-error__cerrar"
+              onClick={() => setErrorExportacion(null)}
+              aria-label="Cerrar aviso de exportación"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
         {/* ── Tarjetas resumen ── */}
         <section className="planilla-resumen" aria-label="Resumen del cierre mensual">
           <article className="planilla-card planilla-card--empleados">
-            <div className="planilla-card__icon" aria-hidden="true">
-              <Users size={22} />
+            <div className="planilla-card__head">
+              <div className="planilla-card__icon" aria-hidden="true">
+                <Users size={18} />
+              </div>
+              <span className="planilla-card__label">Empleados</span>
             </div>
             <div className="planilla-card__body">
-              <span className="planilla-card__label">Total de empleados</span>
               <strong className="planilla-card__value">
                 {formatoEntero.format(totales.empleados)}
               </strong>
@@ -281,12 +395,27 @@ export default function AdminPlanillaPage() {
             </div>
           </article>
 
-          <article className="planilla-card planilla-card--minutos">
-            <div className="planilla-card__icon" aria-hidden="true">
-              <Timer size={22} />
+          <article className="planilla-card planilla-card--horas">
+            <div className="planilla-card__head">
+              <div className="planilla-card__icon" aria-hidden="true">
+                <Clock size={18} />
+              </div>
+              <span className="planilla-card__label">Horas trabajadas</span>
             </div>
             <div className="planilla-card__body">
+              <strong className="planilla-card__value">{formatearHoras(totales.horas)}</strong>
+              <span className="planilla-card__hint">Jornadas completadas en el periodo</span>
+            </div>
+          </article>
+
+          <article className="planilla-card planilla-card--minutos">
+            <div className="planilla-card__head">
+              <div className="planilla-card__icon" aria-hidden="true">
+                <Timer size={18} />
+              </div>
               <span className="planilla-card__label">Minutos de tardanza</span>
+            </div>
+            <div className="planilla-card__body">
               <strong className="planilla-card__value">
                 {formatoEntero.format(totales.minutos)}
                 <span className="planilla-card__unit"> min</span>
@@ -296,11 +425,13 @@ export default function AdminPlanillaPage() {
           </article>
 
           <article className="planilla-card planilla-card--monto">
-            <div className="planilla-card__icon" aria-hidden="true">
-              <Wallet size={22} />
+            <div className="planilla-card__head">
+              <div className="planilla-card__icon" aria-hidden="true">
+                <Wallet size={18} />
+              </div>
+              <span className="planilla-card__label">Descuento total</span>
             </div>
             <div className="planilla-card__body">
-              <span className="planilla-card__label">Monto total descontado</span>
               <strong className="planilla-card__value">{formatearSoles(totales.monto)}</strong>
               <span className="planilla-card__hint">Descuento monetario consolidado (S/)</span>
             </div>
@@ -347,7 +478,7 @@ export default function AdminPlanillaPage() {
             <div className="planilla-estado" role="status" aria-live="polite">
               <LoaderCircle size={30} className="planilla-spin" aria-hidden="true" />
               <p>Calculando el cierre de {periodo}…</p>
-              <span>Estamos consolidando las tardanzas registradas del periodo.</span>
+              <span>Estamos consolidando las horas trabajadas y las tardanzas del periodo.</span>
             </div>
           ) : datos.length === 0 ? (
             <div className="planilla-estado">
@@ -356,20 +487,28 @@ export default function AdminPlanillaPage() {
               </div>
               <p>No hay trabajadores en el reporte para {periodo}</p>
               <span>
-                Verifica que existan empleados activos y marcajes de entrada dentro del periodo
+                Verifica que existan empleados activos registrados en el sistema para el periodo
                 seleccionado.
               </span>
             </div>
           ) : (
-            <div className="planilla-tabla__scroll">
+            <div
+              className="planilla-tabla__scroll"
+              role="region"
+              aria-label="Tabla de planilla, desplazable horizontalmente"
+              tabIndex={0}
+            >
               <table>
                 <thead>
                   <tr>
-                    <th scope="col">Código / DNI</th>
+                    <th scope="col">DNI</th>
                     <th scope="col">Empleado</th>
                     <th scope="col">Cargo</th>
                     <th scope="col" className="planilla-tabla__num">
-                      Minutos de tardanza
+                      Horas Trabajadas
+                    </th>
+                    <th scope="col" className="planilla-tabla__num">
+                      Minutos de Tardanza
                     </th>
                     <th scope="col" className="planilla-tabla__num">
                       Descuento (S/)
@@ -379,7 +518,6 @@ export default function AdminPlanillaPage() {
                 <tbody>
                   {datos.map((item, indice) => {
                     const sinTardanza = item.minutos_tardanza === 0;
-                    const cargo = item.dni ? cargosPorDni[item.dni] : undefined;
                     const clave = `${item.empleado_id ?? item.dni ?? 'fila'}-${indice}`;
 
                     return (
@@ -390,7 +528,7 @@ export default function AdminPlanillaPage() {
                         }
                       >
                         <td>
-                          <code className="planilla-dni">{item.dni ?? '—'}</code>
+                          <code className="planilla-dni">{item.dni || '—'}</code>
                         </td>
                         <td>
                           <div className="planilla-empleado">
@@ -399,7 +537,7 @@ export default function AdminPlanillaPage() {
                             </span>
                             <div>
                               <span className="planilla-empleado__nombre">
-                                {item.nombres ?? 'Sin nombre'}
+                                {item.nombres || 'Sin nombre'}
                               </span>
                               {item.empleado_id != null && (
                                 <span className="planilla-empleado__id">
@@ -412,10 +550,15 @@ export default function AdminPlanillaPage() {
                         <td>
                           <span
                             className={`planilla-cargo ${
-                              cargo === 'Supervisor' ? 'planilla-cargo--supervisor' : ''
+                              item.cargo === 'Supervisor' ? 'planilla-cargo--supervisor' : ''
                             }`}
                           >
-                            {cargo ?? '—'}
+                            {item.cargo || '—'}
+                          </span>
+                        </td>
+                        <td className="planilla-tabla__num">
+                          <span className="planilla-horas">
+                            {formatearHoras(item.horas_trabajadas)}
                           </span>
                         </td>
                         <td className="planilla-tabla__num">
@@ -446,6 +589,7 @@ export default function AdminPlanillaPage() {
                     <td colSpan={3} className="planilla-tabla__total-label">
                       Total consolidado
                     </td>
+                    <td className="planilla-tabla__num">{formatearHoras(totales.horas)}</td>
                     <td className="planilla-tabla__num">
                       {formatoEntero.format(totales.minutos)} min
                     </td>

@@ -9,3 +9,13 @@ class DescuentoTardanzaResponse(BaseModel):
     tarifa_minuto: float
     minutos_tardanza: int
     monto_descuento: float
+
+
+class CierreMensualItemResponse(BaseModel):
+    empleado_id: int
+    dni: str
+    nombres: str
+    cargo: str
+    horas_trabajadas: float
+    minutos_tardanza: int
+    monto_descuento: float
